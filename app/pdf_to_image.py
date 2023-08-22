@@ -43,7 +43,7 @@ def page_size(filename: str):
 def create_images_subfolder(filename: str):
     if filename not in listdir(images_dir):
         mkdir(f"{images_dir}/{filename}")
-        logger.info("created subfolder")
+        logger.info(f"created subfolder: {filename}")
 
 
 def get_poppler_path():
@@ -58,18 +58,18 @@ def get_poppler_path():
 def convert_to_image(filename: str):
     create_images_dir()
     pdf_file = get_pdf_file(filename)
-    pdf_path = f"{main_dir}/pdf_files/{pdf_file}"
     folder_name = pdf_file[:-4]
     create_images_subfolder(folder_name)
+    pdf_path = f"{main_dir}/pdf_files/{pdf_file}"
     poppler_path = rf"{main_dir}/{get_poppler_path()}/Library/bin/"
+    output_folder = f"{main_dir}/images/{folder_name.lower()}/"
     if pdf_file in listdir(images_dir):
         logger.info("subfolder already created")
-        return
     logger.info("converting to images...")
     convert_from_path(
         pdf_path=pdf_path,
         poppler_path=poppler_path,
-        output_folder=f"{main_dir}/images/{folder_name}/",
+        output_folder=output_folder,
         fmt="jpeg",
         use_cropbox=True
     )
