@@ -71,7 +71,7 @@ def convert_to_image(filename: str):
         poppler_path=poppler_path,
         output_folder=output_folder,
         fmt="jpeg",
-        use_cropbox=True
+        use_cropbox=True,
     )
     return
 

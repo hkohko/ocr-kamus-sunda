@@ -1,8 +1,9 @@
 import pytesseract
 import cv2 as cv
+from io import BytesIO
 from os import listdir
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 main_dir = Path(__file__).parent.parent
 current_dir = Path(__file__).parent
@@ -19,14 +20,16 @@ def get_sample_image():
     image_sample = listdir(f"{images_dir}/Kamus_sunda")
     return f"{images_dir}/{subfolder}/{image_sample[page + 1]}"
 
+
 def adapt_thresh():
-    img = cv.imread(get_sample_image(), cv.IMREAD_GRAYSCALE)
-    img = cv.medianBlur(img, 3)
+    img = cv.imread(get_sample_image())
+    # img = cv.medianBlur(img, 5)
     # _,thresh1 = cv.threshold(img,thresh=245, maxval=255, type=cv.THRESH_BINARY)
-    th2 = cv.adaptiveThreshold(img, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 9, 3)
-    th2_denoise = cv.fastNlMeansDenoising(th2)
-    image = Image.fromarray(th2_denoise, "L")
+    # th2 = cv.adaptiveThreshold(img, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
+    img = cv.fastNlMeansDenoising(img, h=5)
+    image = Image.fromarray(img, "RGB")
     return image
+
 
 if __name__ == "__main__":
     im = adapt_thresh()
