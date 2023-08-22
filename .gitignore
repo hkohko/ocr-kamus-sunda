@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+images/
+poppler-23.08.0/
 *.pdf
 
 # C extensions
