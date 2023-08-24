@@ -1,15 +1,15 @@
 import pytesseract
 import cv2 as cv
 import re
+from app.folders import Directories
 from os import listdir, mkdir
 from os.path import exists
-from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
 
-MAIN_DIR = Path(__file__).parent.parent
-IMAGES_DIR = f"{MAIN_DIR}/images"
-OUTPUT_TEXT = f"{MAIN_DIR}/text_result"
+MAIN_DIR = Directories.MAIN_DIR
+IMAGES_DIR = Directories.IMAGES_DIR
+OUTPUT_TEXT = Directories.OUTPUT_TEXT
 
 if not exists(IMAGES_DIR):
     mkdir(IMAGES_DIR)

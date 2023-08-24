@@ -1,26 +1,21 @@
-from pdf2image import convert_from_path
-from pathlib import Path
-from os import listdir, mkdir
 import logging
+from app.folders import Directories, create_dir
+from pdf2image import convert_from_path
+from os import listdir, mkdir
+
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-MAIN_DIR = Path(__file__).parent.parent
-CURRENT_DIR = Path(__file__).parent
-IMAGES_DIR = f"{MAIN_DIR}/images/"
-
-
-def create_images_dir():
-    if "images" not in listdir(MAIN_DIR):
-        mkdir(IMAGES_DIR)
+MAIN_DIR = Directories.MAIN_DIR
+CURRENT_DIR = Directories.CURRENT_DIR
+IMAGES_DIR = Directories.IMAGES_DIR
+PDF_FILES = Directories.PDF_FILES
 
 
 def get_pdf_file(filename: str):
-    pdf_dir = [
-        file for file in listdir(f"{MAIN_DIR}/pdf_files/") if file[-4:] == ".pdf"
-    ]
+    pdf_dir = [file for file in listdir(PDF_FILES) if file[-4:] == ".pdf"]
     for pdf in pdf_dir:
         if filename in pdf.lower():
             return pdf
@@ -42,13 +37,13 @@ def get_poppler_path():
 
 
 def convert_to_image(filename: str):
-    create_images_dir()
+    create_dir()
     pdf_file = get_pdf_file(filename)
     folder_name = pdf_file[:-4]
     create_images_subfolder(folder_name)
-    pdf_path = f"{MAIN_DIR}/pdf_files/{pdf_file}"
+    pdf_path = f"{PDF_FILES}/{pdf_file}"
     poppler_path = rf"{MAIN_DIR}/{get_poppler_path()}/Library/bin/"
-    output_folder = f"{MAIN_DIR}/images/{folder_name.lower()}/"
+    output_folder = f"{IMAGES_DIR}/{folder_name.lower()}/"
     if pdf_file in listdir(IMAGES_DIR):
         logger.info("subfolder already created")
     logger.info("converting to images...")
