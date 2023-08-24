@@ -1,7 +1,6 @@
 from pdf2image import convert_from_path
 from pathlib import Path
 from os import listdir, mkdir
-from pypdf import PdfReader
 import logging
 
 logging.basicConfig(format="%(asctime)s %(message)s")
@@ -25,20 +24,6 @@ def get_pdf_file(filename: str):
     for pdf in pdf_dir:
         if filename in pdf.lower():
             return pdf
-
-
-def page_size(filename: str):
-    pdf_name = get_pdf_file(filename)
-    if pdf_name is None:
-        logger.warning("page_size: no pdf found with that name")
-        raise ValueError
-    file = f"{MAIN_DIR}/pdf_files/{pdf_name}"
-    reader = PdfReader(file)
-    box = reader.pages[0].mediabox
-    width = box.width
-    height = box.height
-    logger.info("getting page size")
-    return (width, height)
 
 
 def create_images_subfolder(filename: str):

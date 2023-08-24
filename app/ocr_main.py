@@ -1,7 +1,8 @@
 import pytesseract
 import cv2 as cv
 import re
-from os import listdir
+from os import listdir, mkdir
+from os.path import exists
 from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
@@ -9,6 +10,11 @@ from tqdm import tqdm
 MAIN_DIR = Path(__file__).parent.parent
 IMAGES_DIR = f"{MAIN_DIR}/images"
 OUTPUT_TEXT = f"{MAIN_DIR}/text_result"
+
+if not exists(IMAGES_DIR):
+    mkdir(IMAGES_DIR)
+if not exists(OUTPUT_TEXT):
+    mkdir(OUTPUT_TEXT)
 
 tesseract_location = (
     r"C:\Users\rifdi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
