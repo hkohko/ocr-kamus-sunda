@@ -1,8 +1,10 @@
 import logging
+from pathlib import PurePath
 from app.folders import Directories, create_dir
 from pdf2image import convert_from_path
 from os import listdir, mkdir
 
+create_dir()
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 logger = logging.getLogger()
@@ -37,13 +39,13 @@ def get_poppler_path():
 
 
 def convert_to_image(filename: str):
-    create_dir()
     pdf_file = get_pdf_file(filename)
+    assert pdf_file is not None, "pdf file not found"
     folder_name = pdf_file[:-4]
     create_images_subfolder(folder_name)
-    pdf_path = f"{PDF_FILES}/{pdf_file}"
-    poppler_path = rf"{MAIN_DIR}/{get_poppler_path()}/Library/bin/"
-    output_folder = f"{IMAGES_DIR}/{folder_name.lower()}/"
+    pdf_path = PurePath(PDF_FILES).joinpath(f"{pdf_file}")
+    poppler_path = PurePath(MAIN_DIR).joinpath(get_poppler_path(), "Library", "bin")
+    output_folder = PurePath(IMAGES_DIR).joinpath(folder_name.lower())
     if pdf_file in listdir(IMAGES_DIR):
         logger.info("subfolder already created")
     logger.info("converting to images...")
@@ -58,4 +60,4 @@ def convert_to_image(filename: str):
 
 
 if __name__ == "__main__":
-    convert_to_image("kamus_sunda")
+    convert_to_image("flask")  # type in a word in your pdf filename
