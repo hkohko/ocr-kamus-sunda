@@ -1,9 +1,8 @@
 import pytesseract
 import cv2 as cv
 import re
-from app.folders import Directories
-from os import listdir, mkdir
-from os.path import exists
+from app.folders import Directories, create_dir
+from os import listdir
 from PIL import Image
 from tqdm import tqdm
 
@@ -11,10 +10,7 @@ MAIN_DIR = Directories.MAIN_DIR
 IMAGES_DIR = Directories.IMAGES_DIR
 OUTPUT_TEXT = Directories.OUTPUT_TEXT
 
-if not exists(IMAGES_DIR):
-    mkdir(IMAGES_DIR)
-if not exists(OUTPUT_TEXT):
-    mkdir(OUTPUT_TEXT)
+create_dir()
 
 tesseract_location = (
     r"C:\Users\rifdi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
@@ -47,6 +43,12 @@ def ocr(im) -> str:
 
 
 def get_sample_image(page: int, subfolder: str):
+    """
+    For testing purposes.
+
+    Optimize processed_img() parameter from a sample image.
+    """
+
     str_page = get_file_number(page)
     image_sample = listdir(f"{IMAGES_DIR}/{subfolder}")
     pattern = r"-(\d+)\.\w+"
@@ -73,6 +75,7 @@ def get_pages(subfolder: str, start: int, end: int):
 def main_all(subfolder: str, start: int, end: int):
     files = listdir(f"{IMAGES_DIR}/{subfolder}")
     start_idx, stop_idx = get_pages(subfolder, start, end)
+    # TODO: write to a database instead
     with open(f"{OUTPUT_TEXT}/{subfolder}.txt", "a") as save_ocr:
         for idx in tqdm(range(start_idx, stop_idx)):
             filename = files[idx]
@@ -83,6 +86,4 @@ def main_all(subfolder: str, start: int, end: int):
 
 
 if __name__ == "__main__":
-    # im = processed_img(68, "Kamus_sunda")
-    # im.show()
     main_all("Kamus_sunda", 68, 449)
