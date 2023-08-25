@@ -5,6 +5,7 @@ __pycache__/
 images/
 pdf_files/
 poppler-23.08.0/
+text_result/
 *.pdf
 
 # C extensions
