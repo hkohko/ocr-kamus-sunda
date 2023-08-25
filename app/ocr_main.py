@@ -1,6 +1,7 @@
 import pytesseract
 import cv2 as cv
 import re
+from pathlib import Path, PurePath
 from app.folders import Directories, create_dir
 from os import listdir
 from PIL import Image
@@ -12,9 +13,7 @@ OUTPUT_TEXT = Directories.OUTPUT_TEXT
 
 create_dir()
 
-tesseract_location = (
-    r"C:\Users\rifdi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
-)
+tesseract_location = PurePath(Path.home()).joinpath("AppData", "Local", "Programs", "Tesseract-OCR", "tesseract.exe")  # r"C:\Users\rifdi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 pytesseract.pytesseract.tesseract_cmd = tesseract_location
 
 
@@ -30,6 +29,7 @@ def get_file_number(input_page: int):
 
 
 def processed_img(img: str):
+    print(f"\n\n{img}\n\n")
     im = cv.imread(img)
     assert im is not None, "image not found"
     denoised = cv.fastNlMeansDenoising(im, h=5)
@@ -72,18 +72,29 @@ def get_pages(subfolder: str, start: int, end: int):
     return start_idx, end_idx
 
 
-def main_all(subfolder: str, start: int, end: int):
-    files = listdir(f"{IMAGES_DIR}/{subfolder}")
-    start_idx, stop_idx = get_pages(subfolder, start, end)
+def get_subfolder(folder_name: str):
+    subfolders = listdir(IMAGES_DIR)
+    for folder in subfolders:
+        if folder_name in folder.lower():
+            return folder
+
+
+def main_all(subfolder: str, start: int, end: int, save: bool = True):
+    folder_name = get_subfolder(subfolder)
+    assert folder_name is not None, "image subfolder doesn't exist"
+    files = listdir(f"{IMAGES_DIR}/{folder_name}")
+    start_idx, stop_idx = get_pages(folder_name, start, end)
     # TODO: write to a database instead
-    with open(f"{OUTPUT_TEXT}/{subfolder}.txt", "a") as save_ocr:
+    with open(f"{OUTPUT_TEXT}/{folder_name}.txt", "a") as save_ocr:
         for idx in tqdm(range(start_idx, stop_idx)):
             filename = files[idx]
-            image_path = f"{IMAGES_DIR}/{subfolder}/{filename}"
-            prepped_image = processed_img(image_path)
+            # TODO: handle weird characters in image_path
+            image_path = PurePath(IMAGES_DIR).joinpath(folder_name, filename)
+            prepped_image = processed_img(str(image_path))
             do_ocr = ocr(prepped_image)
-            save_ocr.write(do_ocr)
+            if save:
+                save_ocr.write(do_ocr)
 
 
 if __name__ == "__main__":
-    main_all("Kamus_sunda", 68, 449)
+    main_all("kamus", 50, 52, save=False)

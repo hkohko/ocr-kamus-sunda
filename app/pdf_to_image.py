@@ -41,7 +41,8 @@ def get_poppler_path():
 def convert_to_image(filename: str):
     pdf_file = get_pdf_file(filename)
     assert pdf_file is not None, "pdf file not found"
-    folder_name = pdf_file[:-4]
+    filename_noext = pdf_file[:-4]
+    folder_name = filename_noext.replace(" ", "")
     create_images_subfolder(folder_name)
     pdf_path = PurePath(PDF_FILES).joinpath(f"{pdf_file}")
     poppler_path = PurePath(MAIN_DIR).joinpath(get_poppler_path(), "Library", "bin")
