@@ -13,7 +13,9 @@ OUTPUT_TEXT = Directories.OUTPUT_TEXT
 
 create_dir()
 
-tesseract_location = PurePath(Path.home()).joinpath("AppData", "Local", "Programs", "Tesseract-OCR", "tesseract.exe")  # r"C:\Users\rifdi\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+tesseract_location = PurePath(Path.home()).joinpath(
+    "AppData", "Local", "Programs", "Tesseract-OCR", "tesseract.exe"
+)
 pytesseract.pytesseract.tesseract_cmd = tesseract_location
 
 
@@ -82,14 +84,13 @@ def get_subfolder(folder_name: str):
 def main_all(subfolder: str, start: int, end: int, save: bool = True):
     folder_name = get_subfolder(subfolder)
     assert folder_name is not None, "image subfolder doesn't exist"
-    files = listdir(f"{IMAGES_DIR}/{folder_name}")
+    image_files = listdir(f"{IMAGES_DIR}/{folder_name}")
     start_idx, stop_idx = get_pages(folder_name, start, end)
     # TODO: write to a database instead
     with open(f"{OUTPUT_TEXT}/{folder_name}.txt", "a") as save_ocr:
         for idx in tqdm(range(start_idx, stop_idx)):
-            filename = files[idx]
-            # TODO: handle weird characters in image_path
-            image_path = PurePath(IMAGES_DIR).joinpath(folder_name, filename)
+            image_filename = image_files[idx]
+            image_path = PurePath(IMAGES_DIR).joinpath(folder_name, image_filename)
             prepped_image = processed_img(str(image_path))
             do_ocr = ocr(prepped_image)
             if save:
@@ -97,4 +98,4 @@ def main_all(subfolder: str, start: int, end: int, save: bool = True):
 
 
 if __name__ == "__main__":
-    main_all("kamus", 50, 52, save=False)
+    main_all("kamus", 50, 52)
