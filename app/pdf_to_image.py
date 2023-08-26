@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import PurePath
 from app.folders import Directories, create_dir
 from pdf2image import convert_from_path
@@ -38,15 +39,24 @@ def get_poppler_path():
     return poppler_folder
 
 
+def clean_up_subfoldername(filename: str):
+    pattern = r"\w+"
+    words_only = re.findall(pattern, filename, re.IGNORECASE)
+    subfolder_name = "".join(words_only)
+    return subfolder_name
+
+
 def convert_to_image(filename: str):
     pdf_file = get_pdf_file(filename)
     assert pdf_file is not None, "pdf file not found"
     filename_noext = pdf_file[:-4]
-    folder_name = filename_noext.replace(" ", "")
-    create_images_subfolder(folder_name)
+    subfolder_name = clean_up_subfoldername(filename_noext)
+    create_images_subfolder(subfolder_name)
+
     pdf_path = PurePath(PDF_FILES).joinpath(f"{pdf_file}")
     poppler_path = PurePath(MAIN_DIR).joinpath(get_poppler_path(), "Library", "bin")
-    output_folder = PurePath(IMAGES_DIR).joinpath(folder_name.lower())
+    output_folder = PurePath(IMAGES_DIR).joinpath(subfolder_name.lower())
+
     if pdf_file in listdir(IMAGES_DIR):
         logger.info("subfolder already created")
     logger.info("converting to images...")
