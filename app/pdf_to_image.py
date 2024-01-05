@@ -1,7 +1,7 @@
 import logging
 import re
 from pathlib import PurePath
-from app.folders import Directories, create_dir
+from folders import Directories, create_dir
 from pdf2image import convert_from_path
 from os import listdir, mkdir
 
@@ -54,7 +54,7 @@ def convert_to_image(filename: str):
     create_images_subfolder(subfolder_name)
 
     pdf_path = PurePath(PDF_FILES).joinpath(f"{pdf_file}")
-    poppler_path = PurePath(MAIN_DIR).joinpath(get_poppler_path(), "Library", "bin")
+    # poppler_path = PurePath(MAIN_DIR).joinpath(get_poppler_path(), "Library", "bin")
     output_folder = PurePath(IMAGES_DIR).joinpath(subfolder_name.lower())
 
     if pdf_file in listdir(IMAGES_DIR):
@@ -62,7 +62,7 @@ def convert_to_image(filename: str):
     logger.info("converting to images...")
     convert_from_path(
         pdf_path=pdf_path,
-        poppler_path=poppler_path,
+        # poppler_path=poppler_path,
         output_folder=output_folder,
         fmt="jpeg",
         use_cropbox=True,
@@ -71,4 +71,4 @@ def convert_to_image(filename: str):
 
 
 if __name__ == "__main__":
-    convert_to_image("flask")  # type in a word in your pdf filename
+    convert_to_image("epstein")  # type in a word in your pdf filename
